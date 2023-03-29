@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import login from '../views/login/login.vue';
 import home from '../views/HomeView.vue';
+import vue from '@/main';
 
 
 Vue.use(Router);
@@ -31,11 +32,20 @@ const router = new Router({
 });
 
 router.beforeEach((to,from,next)=>{
-next()
+    if(to.path =='/'){
+        next()
+    }else{
+        if(sessionStorage.getItem("token")){
+          next()
+        }else{
+           vue.$message.error("未登录，请登录！") 
+           next({path:'/'})
+        }
+    }
+
 },err=>{
     console.log(err)
 })
 router.afterEach((to,from)=>{
-
 })
 export default router

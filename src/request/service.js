@@ -7,18 +7,13 @@ function getTokenByLocal(){
     return token;
 }
 const service = axios.create({
-    baseURL:'/api',
+    baseURL:'http://127.0.0.1:8088',
     timeout: 5000
 })
 //请求拦截
 service.interceptors.request.use(
     config => {
-        if(getTokenByLocal()){
-            config.headers['token'] = getTokenByLocal();
 
-        }else{
-           vue.$router.push('/login');
-        }
         return config;
     },
     error => {
@@ -28,13 +23,12 @@ service.interceptors.request.use(
 //响应拦截
 service.interceptors.response.use(
     response => {
-        let res = response.data;
-        if(res.code == '-101'){
-          vue.$router.push('/login');
-        }
-        return Promise.resolve(res);
+        // let res = JSON.parse(response.data);
+        console.log(response)
+        return Promise.resolve(response);
      },
      error => {
+        vue.$message.error("服务器错误")
         return Promise.reject(error);
      }
 )
