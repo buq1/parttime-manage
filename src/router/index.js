@@ -22,9 +22,44 @@ const router = new Router({
             component:home,
             children:[
                 {
-                    path:'index',
+                    path:'',
                     name:'index',
                     component:()=>import ('../views/index/index.vue')
+                },
+                {
+                    path:'cvmanage',
+                    name:'cvmanage',
+                    component:()=>import ('../views/cvManage/index')
+                },
+                {
+                    path:'approve',
+                    name:'approve',
+                    component:()=>import('../views/spManage/index')
+                },
+                {
+                    path:'usermanage',
+                    name:'usermanage',
+                    component:()=>import('../views/userManage/index')
+                },
+                {
+                    path:'gwmanage',
+                    name:'gwmanage',
+                    component:()=>import('../views/gwMange/index')
+                },
+                {
+                    path:'gsmanage',
+                    name:'gsmanage',
+                    component:()=>import('../views/gsManage/index')
+                },
+                {
+                    path:'notice',
+                    name:'notice',
+                    component:()=>import('../views/notice/index')
+                },
+                {
+                    path:'info',
+                    name:'info',
+                    component:()=>import('../views/infoManage/index')
                 }
             ]
         },

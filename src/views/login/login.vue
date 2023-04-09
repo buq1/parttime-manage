@@ -22,9 +22,9 @@
                 <template v-slot:prepend><i class="el-icon-lock"></i></template>
               </el-input>
             </el-form-item>
-
-            <el-radio v-model="ruleForm.verify" :label="true" @click.native.prevent="changeStatus()">记住我</el-radio>
-
+            <el-form-item>
+              <el-radio v-model="ruleForm.verify" :label="true" @click.native.prevent="changeStatus()">记住我</el-radio>
+            </el-form-item>
             <el-button type="primary" @click="loginFn('ruleForm')">登录</el-button>
           </el-form>
         </div>
@@ -68,8 +68,8 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let data = {
-            adminId: this.ruleForm.account,
-            adminPassword: this.ruleForm.password
+            admin_id: this.ruleForm.account,
+            admin_password: this.ruleForm.password
           }
           postRequest(url.login, data).then(
             res => {
@@ -118,13 +118,9 @@ export default {
 p {
   color: #0756e7;
   font-size: 14px;
-}
-.l-nav > form > label {
-  margin-top: 4px;
-  transform: translateX(-110px);
+  text-align: center;
 }
 .l-nav > form > button {
-  margin-top: 18px;
   width: 100%;
 }
 .demo-ruleForm {
@@ -151,6 +147,7 @@ i {
   color: black;
   font-size: 26px;
   line-height: 80px;
+  text-align: center;
   overflow: hidden;
 }
 
