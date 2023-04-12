@@ -17,7 +17,11 @@
             <el-image :lazy-load="true" :src="scope.row.n_photo"></el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="n_status" label="公告状态" min-width="60"> </el-table-column>
+        <el-table-column  label="公告状态" min-width="60"> 
+          <template v-slot="{ row }">
+          <span>{{ row.n_status | statusFilter }} </span>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100">
           <template v-slot="scope">
             <el-button @click="handleClick(scope.row)" type="success" size="small">编辑</el-button>
@@ -37,7 +41,11 @@
             <el-image :lazy-load="true" :src="scope.row.n_photo"></el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="n_status" label="公告状态" min-width="60"> </el-table-column>
+        <el-table-column  label="公告状态" min-width="60"> 
+          <template v-slot="{ row }">
+          <span>{{ row.n_status | statusFilter }} </span>
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100">
           <template v-slot="scope">
             <el-button @click="handleClick(scope.row)" type="success" size="small">编辑</el-button>
@@ -46,7 +54,12 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog title="新加公告" :close-on-click-modal="false" center :visible="dialogVisible" width="30%">
+    <el-dialog
+  title="提示"
+  :visible.sync="dialogVisible"
+  width="30%"
+  :close-on-click-modal="false"
+  >
       <el-form ref="form" :model="from" label-width="80px">
         <el-form-item label="公告标题">
           <el-input v-model="from.n_title"></el-input>
@@ -62,7 +75,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
-          <el-button type="primary" @click="onSubmit(1)">保存并上线</el-button>
+          <el-button v-show="pd" type="primary" @click="onSubmit(1)">保存并上线</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -70,14 +83,30 @@
 </template>
 
 <script>
-import { postRequest } from '@/request/api'
+import { postRequest,getRequest } from '@/request/api'
 export default {
+  created(){
+    this.initTableData()
+    this.initTableData1()
+  },
+  filters:{
+    statusFilter(status){
+      console.log(status)
+      return ['已下线','公告中'][status]
+    }
+  },
   methods: {
     handleClick(row) {
+      console.log(row)
       this.dialogVisible = true
+      this.imageUrl = row.n_photo
       this.from = row
+      this.pd = false
     },
     onSubmit(v) {
+
+
+      if(this.pd){ 
       let status = Number(v || 0)
       this.from.n_status = status
       postRequest('/newnotice', this.from)
@@ -95,11 +124,19 @@ export default {
               offset: 100
             })
           }
+          this.imageUrl = ''
         })
         .catch(err => {
           console.log(err)
         })
-
+      }else{
+        postRequest('/upndata',this.from).then(res=>{
+          this.$message.success("更新成功")
+          this.imageUrl =''
+        }).catch(err=>
+        this.$message.error("更新失败")
+        )
+      }
       this.dialogVisible = false
       this.from = {
         n_title: '',
@@ -108,42 +145,65 @@ export default {
       }
     },
     onDelete(row) {
-      this.MessageBox.confirm('此操作将下线该公告，是否继续？', '提示', {
+      if(row.n_status==1){
+      this.$confirm('此操作将下线该公告，是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
-          this.$message({ type: 'success', message: '删除成功！' })
+          let data = {
+            n_id:row.n_id,
+            n_status:0
+          } 
+          postRequest('/upnstatus',data).then(res=>{  this.$message({ type: 'success', message: '下线成功！' })
+          this.initTableData()
+          this.initTableData1()
+        }).catch(err=>console.log(err))
         })
         .catch(() => {})
+
+      }else{
+        this.$confirm('此操作将上线该公告，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          let data = {
+            n_id:row.n_id,
+            n_status:1
+          } 
+          postRequest('/upnstatus',data).then(res=> {
+          this.$message({ type: 'success', message: '上线成功！' })
+          this.initTableData()
+          this.initTableData1()
+          }
+          ).catch(err=>console.log(err))
+
+        })
+        .catch(() => {})
+      }
     },
     handleAvatarSuccess(res, file) {
       console.log(res)
       this.imageUrl = res.data.imageurl
       this.from.n_photo = res.data.imageurl
+    },
+    initTableData(){
+      getRequest('/getnbyone').then(res=>this.tableData=res.data.data).catch(err=>console.log(err))
+    },
+    initTableData1(){
+      getRequest('/getnbyzero').then(res=>this.tableData1=res.data.data).catch(err=>console.log(err))
     }
   },
 
   data() {
     return {
       tableData: [
-        {
-          n_id: 1,
-          n_title: '123213131231',
-          n_photo: 'ssssss',
-          n_nav: '',
-          n_status: 0
-        }
       ],
       tableData1: [
-        {
-          n_id: 1,
-          n_title: '123213131231',
-          n_photo: 'ssssss',
-          n_nav: '',
-          n_status: 0
-        }
+
       ],
       imageUrl: '',
       dialogVisible: false,
@@ -152,12 +212,18 @@ export default {
         n_photo: '',
         n_nav: ''
       }
+      ,pd:true,
+    
     }
   }
 }
 </script>
 
 <style scoped>
+.c-bottom /deep/ .el-image{
+  width: 160px;
+  height: 90px;
+}
 .bar-title {
   padding: 10px 20px;
 }
@@ -184,6 +250,7 @@ export default {
   box-sizing: border-box;
   border-bottom: 1px solid #aaa;
 }
+
 .c-header > span {
   cursor: pointer;
 }
