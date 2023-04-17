@@ -2,7 +2,7 @@
   <div class="i-nav">
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
     <el-form-item label="原密码" prop="password">
-    <el-input type="password" v-model.number="ruleForm.age" autocomplete="off"></el-input>
+    <el-input type="password" v-model="ruleForm.age" autocomplete="off"></el-input>
   </el-form-item>
   <el-form-item label="新密码" prop="pass">
     <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
@@ -22,25 +22,19 @@
 <script>
 export default {
   data() {
-      var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
-        }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
+     var validatePass1 = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入原密码'));
+        } else {
+          if (this.ruleForm.checkPass !== '') {
+            this.$refs.ruleForm.validateField('checkPass');
           }
-        }, 1000);
+          callback();
+        }
       };
       var validatePass = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入密码'));
+          callback(new Error('请输入新密码'));
         } else {
           if (this.ruleForm.checkPass !== '') {
             this.$refs.ruleForm.validateField('checkPass');
@@ -50,9 +44,9 @@ export default {
       };
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请再次输入密码'));
+          callback(new Error('请再次输入新密码'));
         } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
+          callback(new Error('两次输入新密码不一致!'));
         } else {
           callback();
         }
@@ -61,7 +55,7 @@ export default {
         ruleForm: {
           pass: '',
           checkPass: '',
-          age: ''
+          password: ''
         },
         rules: {
           pass: [
@@ -70,8 +64,8 @@ export default {
           checkPass: [
             { validator: validatePass2, trigger: 'blur' }
           ],
-          age: [
-            { validator: checkAge, trigger: 'blur' }
+          password:[
+            {validator:validatePass1,trigger:'blur'}
           ]
         }
       };
