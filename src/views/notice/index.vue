@@ -17,9 +17,9 @@
             <el-image :lazy-load="true" :src="scope.row.n_photo"></el-image>
           </template>
         </el-table-column>
-        <el-table-column  label="公告状态" min-width="60"> 
+        <el-table-column label="公告状态" min-width="60">
           <template v-slot="{ row }">
-          <span>{{ row.n_status | statusFilter }} </span>
+            <span>{{ row.n_status | statusFilter }} </span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100">
@@ -41,9 +41,9 @@
             <el-image :lazy-load="true" :src="scope.row.n_photo"></el-image>
           </template>
         </el-table-column>
-        <el-table-column  label="公告状态" min-width="60"> 
+        <el-table-column label="公告状态" min-width="60">
           <template v-slot="{ row }">
-          <span>{{ row.n_status | statusFilter }} </span>
+            <span>{{ row.n_status | statusFilter }} </span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100">
@@ -54,12 +54,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog
-  title="提示"
-  :visible.sync="dialogVisible"
-  width="30%"
-  :close-on-click-modal="false"
-  >
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
       <el-form ref="form" :model="from" label-width="80px">
         <el-form-item label="公告标题">
           <el-input v-model="from.n_title"></el-input>
@@ -83,16 +78,16 @@
 </template>
 
 <script>
-import { postRequest,getRequest } from '@/request/api'
+import { postRequest, getRequest } from '@/request/api'
 export default {
-  created(){
+  created() {
     this.initTableData()
     this.initTableData1()
   },
-  filters:{
-    statusFilter(status){
+  filters: {
+    statusFilter(status) {
       console.log(status)
-      return ['已下线','公告中'][status]
+      return ['已下线', '公告中'][status]
     }
   },
   methods: {
@@ -104,38 +99,40 @@ export default {
       this.pd = false
     },
     onSubmit(v) {
-
-
-      if(this.pd){ 
-      let status = Number(v || 0)
-      this.from.n_status = status
-      postRequest('/newnotice', this.from)
-        .then(res => {
-          if (v) {
-            this.$notify({
-              title: '成功',
-              message: '成功提交公告，可去前台看效果',
-              offset: 100
-            })
-          } else {
-            this.$notify({
-              title: '成功',
-              message: '成功保存',
-              offset: 100
-            })
-          }
-          this.imageUrl = ''
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      }else{
-        postRequest('/upndata',this.from).then(res=>{
-          this.$message.success("更新成功")
-          this.imageUrl =''
-        }).catch(err=>
-        this.$message.error("更新失败")
-        )
+      if (this.pd) {
+        let status = Number(v || 0)
+        this.from.n_status = status
+        postRequest('/newnotice', this.from)
+          .then(res => {
+            if (v) {
+              this.$notify({
+                title: '成功',
+                message: '成功提交公告，可去前台看效果',
+                offset: 100
+              })
+            } else {
+              this.$notify({
+                title: '成功',
+                message: '成功保存',
+                offset: 100
+              })
+            }
+            this.initTableData()
+            this.initTableData1()
+            this.imageUrl = ''
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } else {
+        postRequest('/upndata', this.from)
+          .then(res => {
+            this.$message.success('更新成功')
+            this.imageUrl = ''
+            this.initTableData()
+            this.initTableData1()
+          })
+          .catch(err => this.$message.error('更新失败'))
       }
       this.dialogVisible = false
       this.from = {
@@ -145,44 +142,46 @@ export default {
       }
     },
     onDelete(row) {
-      if(row.n_status==1){
-      this.$confirm('此操作将下线该公告，是否继续？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          let data = {
-            n_id:row.n_id,
-            n_status:0
-          } 
-          postRequest('/upnstatus',data).then(res=>{  this.$message({ type: 'success', message: '下线成功！' })
-          this.initTableData()
-          this.initTableData1()
-        }).catch(err=>console.log(err))
+      if (row.n_status == 1) {
+        this.$confirm('此操作将下线该公告，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        .catch(() => {})
-
-      }else{
+          .then(() => {
+            let data = {
+              n_id: row.n_id,
+              n_status: 0
+            }
+            postRequest('/upnstatus', data)
+              .then(res => {
+                this.$message({ type: 'success', message: '下线成功！' })
+                this.initTableData()
+                this.initTableData1()
+              })
+              .catch(err => console.log(err))
+          })
+          .catch(() => {})
+      } else {
         this.$confirm('此操作将上线该公告，是否继续？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          let data = {
-            n_id:row.n_id,
-            n_status:1
-          } 
-          postRequest('/upnstatus',data).then(res=> {
-          this.$message({ type: 'success', message: '上线成功！' })
-          this.initTableData()
-          this.initTableData1()
-          }
-          ).catch(err=>console.log(err))
-
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
-        .catch(() => {})
+          .then(() => {
+            let data = {
+              n_id: row.n_id,
+              n_status: 1
+            }
+            postRequest('/upnstatus', data)
+              .then(res => {
+                this.$message({ type: 'success', message: '上线成功！' })
+                this.initTableData()
+                this.initTableData1()
+              })
+              .catch(err => console.log(err))
+          })
+          .catch(() => {})
       }
     },
     handleAvatarSuccess(res, file) {
@@ -190,37 +189,37 @@ export default {
       this.imageUrl = res.data.imageurl
       this.from.n_photo = res.data.imageurl
     },
-    initTableData(){
-      getRequest('/getnbyone').then(res=>this.tableData=res.data.data).catch(err=>console.log(err))
+    initTableData() {
+      getRequest('/getnbyone')
+        .then(res => (this.tableData = res.data.data))
+        .catch(err => console.log(err))
     },
-    initTableData1(){
-      getRequest('/getnbyzero').then(res=>this.tableData1=res.data.data).catch(err=>console.log(err))
+    initTableData1() {
+      getRequest('/getnbyzero')
+        .then(res => (this.tableData1 = res.data.data))
+        .catch(err => console.log(err))
     }
   },
 
   data() {
     return {
-      tableData: [
-      ],
-      tableData1: [
-
-      ],
+      tableData: [],
+      tableData1: [],
       imageUrl: '',
       dialogVisible: false,
       from: {
         n_title: '',
         n_photo: '',
         n_nav: ''
-      }
-      ,pd:true,
-    
+      },
+      pd: true
     }
   }
 }
 </script>
 
 <style scoped>
-.c-bottom /deep/ .el-image{
+.c-bottom /deep/ .el-image {
   width: 160px;
   height: 90px;
 }
