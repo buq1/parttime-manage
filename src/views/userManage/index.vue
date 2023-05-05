@@ -12,19 +12,33 @@
         <el-table-column fixedID prop="user_id" label="用户ID" min-width="60">
         </el-table-column>
         <el-table-column prop="user_role" label="用户类型" min-width="100">
+          <template v-slot="{ row }">
+            <span>{{ row.user_role | formatRole }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="user_name" label="账户名" min-width="100">
         </el-table-column>
         <el-table-column prop="user_avator" label="用户头像" min-width="200">
+          <template v-slot="{ row }">
+          <el-avatar size="large" shape="circle" :src="row.user_avator"></el-avatar>
+          </template>
         </el-table-column>
         <el-table-column prop="user_status" label="用户状态" min-width="100">
+          <template v-slot="{ row }">
+            <span>{{ row.user_status | formatStatus }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="user_star" label="用户评级" min-width="100">
+          <template v-slot="{ row }">
+            <el-rate :value="Number(row.user_star)" disabled show-score text-color="#ff9900"></el-rate>
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button @click="handleEdit(scope.$index, scope.row)" size="mini">编辑</el-button>
-            <el-button @click="handleDelete(scope.$index, scope.row)" size="mini" type="danger">下线</el-button>
+            
+            <el-button v-if="scope.row.user_status == 0" @click="handleDelete(scope.$index, scope.row)" size="mini" type="danger">封禁</el-button>
+            <el-button v-else size="mini" type="primary">解禁</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -37,7 +51,7 @@
 <script>
 
 import GoodsDialog from './GoodsDialog.vue'
-
+import { getRequest } from '@/request/api'
 export default {
   components: {
     GoodsDialog
@@ -56,22 +70,21 @@ export default {
   created() {
     this.getGoodsList()
   },
-  methods: {
-    async getGoodsList(pageNum = 1, psize = 30) {
-      try {
-        this.currentPage = pageNum;
-        this.pageSize = psize;
-        const res = await getGoodsList(pageNum, psize);
-        this.tableData = res.customers;
-        try {
-          this.total = res.total.total;
-        } catch (error) { }
-      } catch (error) {
-        console.log(error)
-      }
+  filters: {
+    formatRole(value) {
+      return ['普通用户', '招聘用户'][value]
     },
-    dataformat(row, column, cellValue) {
-      return new Date(cellValue).toLocaleDateString();
+    formatStatus(value) {
+      return ['正常', '封禁中'][value]
+    }
+  },
+  methods: {
+
+
+    getGoodsList() {
+      getRequest('/getusers').then(res => {
+        this.tableData = res.data.data
+      }).catch(err => { console.log(err) })
     },
 
     handleEdit(index, row) {
