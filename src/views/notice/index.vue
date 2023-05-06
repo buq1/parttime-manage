@@ -11,7 +11,11 @@
       <el-table :data="tableData" :max-height="300" border style="width: 100%">
         <el-table-column prop="n_id" label="公告ID" min-width="80"> </el-table-column>
         <el-table-column prop="n_title" label="公告标题" min-width="100"> </el-table-column>
-        <el-table-column prop="n_nav" label="公告内容" min-width="300"> </el-table-column>
+        <el-table-column prop="n_nav" label="公告内容" min-width="300">
+          <template slot-scope="scope">
+            <div v-html="scope.row.n_nav"></div>
+          </template>
+        </el-table-column>
         <el-table-column label="公告封面" min-width="120">
           <template v-slot="scope">
             <el-image :lazy-load="true" :src="scope.row.n_photo"></el-image>
@@ -35,7 +39,11 @@
       <el-table :data="tableData1" border style="width: 100%">
         <el-table-column prop="n_id" label="公告ID" min-width="80"> </el-table-column>
         <el-table-column prop="n_title" label="公告标题" min-width="100"> </el-table-column>
-        <el-table-column prop="n_nav" label="公告内容" min-width="300"> </el-table-column>
+        <el-table-column prop="n_nav" label="公告内容" min-width="300">
+          <template slot-scope="scope">
+            <div v-html="scope.row.n_nav"></div>
+          </template>
+        </el-table-column>
         <el-table-column label="公告封面" min-width="120">
           <template v-slot="scope">
             <el-image :lazy-load="true" :src="scope.row.n_photo"></el-image>
@@ -66,7 +74,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="公告内容">
-          <el-input v-model="from.n_nav"></el-input>
+          <wangEditor :e-text="from.n_nav" @sendEditor="getNavText"> </wangEditor>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -79,18 +87,24 @@
 
 <script>
 import { postRequest, getRequest } from '@/request/api'
+import wangEditor from '@/components/wangEditor.vue'
 export default {
+  components: {
+    wangEditor
+  },
   created() {
     this.initTableData()
     this.initTableData1()
   },
   filters: {
     statusFilter(status) {
-      console.log(status)
       return ['已下线', '公告中'][status]
     }
   },
   methods: {
+    getNavText(val) {
+      this.nav = val
+    },
     handleClick(row) {
       console.log(row)
       this.dialogVisible = true
@@ -102,6 +116,8 @@ export default {
       if (this.pd) {
         let status = Number(v || 0)
         this.from.n_status = status
+        this.from.n_nav = this.nav
+        console.log(this.from)
         postRequest('/newnotice', this.from)
           .then(res => {
             if (v) {
@@ -117,20 +133,23 @@ export default {
                 offset: 100
               })
             }
+            this.imageUrl = ''
             this.initTableData()
             this.initTableData1()
-            this.imageUrl = ''
+            this.nav = ''
           })
           .catch(err => {
             console.log(err)
           })
       } else {
+        this.from.n_nav = this.nav
         postRequest('/upndata', this.from)
           .then(res => {
             this.$message.success('更新成功')
             this.imageUrl = ''
             this.initTableData()
             this.initTableData1()
+            this.nav = ''
           })
           .catch(err => this.$message.error('更新失败'))
       }
@@ -212,6 +231,7 @@ export default {
         n_photo: '',
         n_nav: ''
       },
+      nav: '',
       pd: true
     }
   }

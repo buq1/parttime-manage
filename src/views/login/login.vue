@@ -80,7 +80,7 @@ export default {
                 } else {
                   sessionStorage.setItem('token', res.data.data.token)
                   sessionStorage.setItem('username', res.data.data.username)
-                  this.$router.push({ name: 'home' })
+                  this.$router.push({ name: 'index' })
                 }
               } else {
                 this.$message.error('网络或服务器错误！')

@@ -8,7 +8,12 @@
       </div>
 
       <div class="flex reverse">
+        <el-dropdown :show-timeout="150" @command="exitLogin($event)">
         <el-button icon="el-icon-setting" circle class="setting-button"></el-button>
+        <el-dropdown-menu>
+              <el-dropdown-item command="exit">退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
       </div>
     </el-header>
     <el-container class="nativeclass">
@@ -72,6 +77,11 @@ export default {
     },
     handleClose(key, keypath) {
       console.log(key, keypath)
+    },
+    exitLogin(e){
+      if (e == 'exit') {
+        console.log(e)
+      }
     }
   }
 }
