@@ -15,7 +15,7 @@
               <span>今日新增简历数</span>
             </div>
             <div class="count">
-              <span>{{ todayOrderNumber }}</span>
+              <span>{{ cvCount.todayNum }}</span>
             </div>
           </div>
         </div>
@@ -29,7 +29,7 @@
               <span>待审批简历数</span>
             </div>
             <div class="count">
-              <span>{{ todaySaleroom }}</span>
+              <span>{{ cvCount.pendingNum }}</span>
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@
               <span>累计简历数</span>
             </div>
             <div class="count">
-              <span>{{ cumulativeSaleroom }}</span>
+              <span>{{ cvCount.total }}</span>
             </div>
           </div>
         </div>
@@ -177,33 +177,33 @@
             <div class="num">
               <span>{{ userCount.total }}</span>
             </div>
-            <div class="show" v-if="userCount.subtract !== 0">
-              较上周
+            <!-- <div class="show" v-if="userCount.subtract !== 0"> -->
+            <!-- 较上周
               <i class="el-icon-caret-top" style="color: green" v-if="userCount.discrepancy == 1"></i>
-              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i>
-              <!-- <img src="../../assets/img/6.png" v-if="userCount.discrepancy == 1" alt="" /> -->
-              <!-- <img src="../../assets/img/7.png" v-if="userCount.discrepancy == 2" alt="" /> -->
-              <span>{{ userCount.subtract }}</span>
-            </div>
+              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i> -->
+            <!-- <img src="../../assets/img/6.png" v-if="userCount.discrepancy == 1" alt="" /> -->
+            <!-- <img src="../../assets/img/7.png" v-if="userCount.discrepancy == 2" alt="" /> -->
+            <!-- <span>{{ userCount.subtract }}</span> -->
+            <!-- </div> -->
           </div>
         </div>
         <div class="bottom-item">
           <div class="txt">
-            <span>今日新增用户数</span>
+            <span>待审批招聘方用户数</span>
           </div>
           <div class="count">
             <div class="num">
-              <span>{{ teacherCount.total }}</span>
+              <span>{{ userCount.pendingNum }}</span>
             </div>
-            <div class="show" v-if="teacherCount.subtract !== 0">
-              较昨日
+            <!-- <div class="show" v-if="teacherCount.subtract !== 0"> -->
+            <!-- 较昨日
               <i class="el-icon-caret-top" style="color: green" v-if="userCount.discrepancy == 1"></i>
-              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i>
+              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i> -->
 
-              <!-- <img src="../../assets/img/6.png" v-if="teacherCount.discrepancy == 1" alt="" /> -->
-              <!-- <img src="../../assets/img/7.png" v-if="teacherCount.discrepancy == 2" alt="" /> -->
-              <span>{{ teacherCount.subtract }}</span>
-            </div>
+            <!-- <img src="../../assets/img/6.png" v-if="teacherCount.discrepancy == 1" alt="" /> -->
+            <!-- <img src="../../assets/img/7.png" v-if="teacherCount.discrepancy == 2" alt="" /> -->
+            <!-- <span>{{ teacherCount.subtract }}</span> -->
+            <!-- </div> -->
           </div>
         </div>
         <div class="bottom-item">
@@ -212,17 +212,17 @@
           </div>
           <div class="count">
             <div class="num">
-              <span>{{ parentCount.total }}</span>
+              <span>{{ userCount.recruiterNum }}</span>
             </div>
-            <div class="show" v-if="parentCount.subtract !== 0">
-              较上周
+            <!-- <div class="show" v-if="parentCount.subtract !== 0"> -->
+            <!-- 较上周
               <i class="el-icon-caret-top" style="color: green" v-if="userCount.discrepancy == 1"></i>
-              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i>
+              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i> -->
 
-              <!-- <img src="../../assets/img/6.png" v-if="parentCount.discrepancy == 1" alt="" /> -->
-              <!-- <img src="../../assets/img/7.png" v-if="parentCount.discrepancy == 2" alt="" /> -->
-              <span>{{ parentCount.subtract }}</span>
-            </div>
+            <!-- <img src="../../assets/img/6.png" v-if="parentCount.discrepancy == 1" alt="" /> -->
+            <!-- <img src="../../assets/img/7.png" v-if="parentCount.discrepancy == 2" alt="" /> -->
+            <!-- <span>{{ parentCount.subtract }}</span> -->
+            <!-- </div> -->
           </div>
         </div>
         <div class="bottom-item">
@@ -231,17 +231,17 @@
           </div>
           <div class="count">
             <div class="num">
-              <span>{{ newUserCount.total }}</span>
+              <span>{{ userCount.todayNum }}</span>
             </div>
-            <div class="show" v-if="newUserCount.subtract !== 0">
-              较昨日
+            <!-- <div class="show" v-if="newUserCount.subtract !== 0"> -->
+            <!-- 较昨日
               <i class="el-icon-caret-top" style="color: green" v-if="userCount.discrepancy == 1"></i>
-              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i>
+              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i> -->
 
-              <!-- <img src="../../assets/img/6.png" v-if="newUserCount.discrepancy == 1" alt="" /> -->
-              <!-- <img src="../../assets/img/7.png" v-if="newUserCount.discrepancy == 2" alt="" /> -->
-              <span>{{ newUserCount.subtract }}</span>
-            </div>
+            <!-- <img src="../../assets/img/6.png" v-if="newUserCount.discrepancy == 1" alt="" /> -->
+            <!-- <img src="../../assets/img/7.png" v-if="newUserCount.discrepancy == 2" alt="" /> -->
+            <!-- <span>{{ newUserCount.subtract }}</span> -->
+            <!-- </div> -->
           </div>
         </div>
       </div>
@@ -256,17 +256,17 @@
           </div>
           <div class="count">
             <div class="num">
-              <span>{{ userCount.total }}</span>
+              <span>{{ companyCount.todayNum }}</span>
             </div>
-            <div class="show" v-if="userCount.subtract !== 0">
-              较昨日
+            <!-- <div class="show" v-if="userCount.subtract !== 0"> -->
+            <!-- 较昨日
               <i class="el-icon-caret-top" style="color: green" v-if="userCount.discrepancy == 1"></i>
-              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i>
+              <i class="el-icon-caret-bottom" style="color: red" v-if="userCount.discrepancy == 2"></i> -->
 
-              <!-- <img src="../../assets/img/6.png" v-if="userCount.discrepancy == 1" alt="" /> -->
-              <!-- <img src="../../assets/img/7.png" v-if="userCount.discrepancy == 2" alt="" /> -->
-              <span>{{ userCount.subtract }}</span>
-            </div>
+            <!-- <img src="../../assets/img/6.png" v-if="userCount.discrepancy == 1" alt="" /> -->
+            <!-- <img src="../../assets/img/7.png" v-if="userCount.discrepancy == 2" alt="" /> -->
+            <!-- <span>{{ userCount.subtract }}</span> -->
+            <!-- </div> -->
           </div>
         </div>
         <div class="bottom-item">
@@ -275,14 +275,14 @@
           </div>
           <div class="count">
             <div class="num">
-              <span>{{ teacherCount.total }}</span>
+              <span>{{ companyCount.total }}</span>
             </div>
-            <div class="show" v-if="teacherCount.subtract !== 0">
-              较上周
-              <!-- <img src="../../assets/img/6.png" v-if="teacherCount.discrepancy == 1" alt="" /> -->
-              <!-- <img src="../../assets/img/7.png" v-if="teacherCount.discrepancy == 2" alt="" /> -->
-              <span>{{ teacherCount.subtract }}</span>
-            </div>
+            <!-- <div class="show" v-if="teacherCount.subtract !== 0"> -->
+            <!-- 较上周 -->
+            <!-- <img src="../../assets/img/6.png" v-if="teacherCount.discrepancy == 1" alt="" /> -->
+            <!-- <img src="../../assets/img/7.png" v-if="teacherCount.discrepancy == 2" alt="" /> -->
+            <!-- <span>{{ teacherCount.subtract }}</span> -->
+            <!-- </div> -->
           </div>
         </div>
       </div>
@@ -291,28 +291,13 @@
 </template>
 
 <script>
+import { getRequest } from '@/request/api'
 export default {
   data() {
     return {
-      todaySaleroom: 0,
-      todayOrderNumber: 0,
-      cumulativeSaleroom: 0,
-      cumulativeOrder: 0,
-      alreadyReceiving: 0,
-      alreadyRefund: 0,
-      awaitRefund: 0,
-      awaitSendOut: 0,
-      awaitpaid: 0,
-      userCount: {
-        discrepancy: 0,
-        subtract: 0,
-        total: 0
-      },
-      teacherCount: {
-        discrepancy: 0,
-        subtract: 0,
-        total: 0
-      },
+      userCount: {},
+      cvCount: {},
+      companyCount: {},
       parentCount: {
         discrepancy: 0,
         subtract: 0,
@@ -325,8 +310,41 @@ export default {
       }
     }
   },
+  created() {
+    this.getUserNum()
+    this.getCVNum()
+    this.getMeNum()
+  },
   mounted() {},
-  methods: {}
+  methods: {
+    getUserNum() {
+      getRequest('/usersinfor')
+        .then(res => {
+          this.userCount = res.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    getCVNum() {
+      getRequest('/getCVNum')
+        .then(res => {
+          this.cvCount = res.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    getMeNum() {
+      getRequest('/getMeNum')
+        .then(res => {
+          this.companyCount = res.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+  }
 }
 </script>
 

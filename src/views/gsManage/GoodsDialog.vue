@@ -3,167 +3,168 @@
 
 -->
 <template>
-    <el-dialog :title=title :visible.sync="a" width="70%" :before-close="handleClose">
+  <el-dialog :title="title" :visible.sync="a" width="70%" :before-close="handleClose">
+    <div class="myform">
+      <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm" label-width="100px">
+        <el-form-item label="公司名称" prop="m_name">
+          <el-input v-model="form.m_name"></el-input>
+        </el-form-item>
+        <el-form-item label="公司LOGO">
+          <el-upload action="http://127.0.0.1:8088/oss/policy" :on-success="handleSuccess" :on-error="handleError" list-type="picture-card" :limit="1" :on-exceed="throwOver">
+            <i slot="default" class="el-icon-plus"></i>
+            <div slot="file" slot-scope="{ file }">
+              <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+              <span class="el-upload-list__item-actions">
+                <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+                  <i class="el-icon-zoom-in"></i>
+                </span>
+                <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                  <i class="el-icon-delete"></i>
+                </span>
+              </span>
+            </div>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="" />
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="公司管理员ID" prop="m_creater">
+          <el-input v-model="form.m_creater"></el-input>
+        </el-form-item>
+        <el-form-item label="公司统一社会信用码" prop="m_shxydm">
+          <el-input v-model="form.m_shxydm"></el-input>
+        </el-form-item>
+        <el-form-item label="公司营业执照照片">
+          <el-upload action="http://127.0.0.1:8088/oss/policy" list-type="picture-card" :on-success="handleSuccess1" :on-error="handleError" :limit="1" :on-exceed="throwOver">
+            <i slot="default" class="el-icon-plus"></i>
+            <div slot="file" slot-scope="{ file }">
+              <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+              <span class="el-upload-list__item-actions">
+                <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+                  <i class="el-icon-zoom-in"></i>
+                </span>
+                <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                  <i class="el-icon-delete"></i>
+                </span>
+              </span>
+            </div>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="公司简介">
+          <el-input type="textarea" v-model="form.m_infor"></el-input>
+        </el-form-item>
+        <el-form-item label="公司环境照片">
+          <el-upload class="upload-demo" action="http://127.0.0.1:8088/oss/policy" :on-success="handleSuccess2" :limit="6" :on-exceed="throwOver" :on-preview="handlePreview" :on-remove="handleRemove" :file-list="fileList" :multiple="true" list-type="picture">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+    </div>
 
-        <div class="myform">
-            <el-form ref="form" :model="form" :rules="rules" class="demo-ruleForm" label-width="80px">
-                <el-form-item label="类目选择" prop="category">
-                    <el-button type="primary" @click="innerVisible = true"> 类目选择</el-button>
-                    <span>{{ form.category }}</span>
-                </el-form-item>
-                <el-form-item label="商品名称" prop="title">
-                    <el-input v-model="form.title"></el-input>
-                </el-form-item>
-                <el-form-item label="商品价格" prop="price">
-                    <el-input v-model="form.price"></el-input>
-                </el-form-item>
-                <el-form-item label="商品数量" prop="num">
-                    <el-input v-model="form.num"></el-input>
-                </el-form-item>
-
-                <el-form-item label="发布时间">
-                    <el-col :span="11">
-                        <el-form-item prop="date1">
-                            <el-date-picker type="date" v-model="form.date1" placeholder="选择日期" style="width: 100%;"></el-date-picker>
-                        </el-form-item>
-                    </el-col>
-                    <el-col class="line" :span="2">-</el-col>
-                    <el-col :span="11">
-                        <el-form-item prop="date2">
-                            <el-time-picker placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
-                        </el-form-item>
-                    </el-col>
-                </el-form-item>
-                <el-form-item label="商品卖点">
-                    <el-input v-model="form.sellpoint"></el-input>
-                </el-form-item>
-                <el-form-item label="商品图片" prop="image">
-                    <el-button type="primary" @click="showImgUp">上传图片</el-button>
-                </el-form-item>
-                <el-form-item label="商品描述">
-                    <wangEditor @sendEditor="getEditor"></wangEditor>
-                </el-form-item>
-            </el-form>
-        </div>
-
-
-
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="resetForm">取 消</el-button>
-            <el-button type="primary" @click="onSubmit">确 定</el-button>
-        </span>
-    </el-dialog>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="resetForm">取 消</el-button>
+      <el-button type="primary" @click="onSubmit">确 定</el-button>
+    </span>
+  </el-dialog>
 </template>
 <script>
-
+import { postRequest } from '@/request/api'
 export default {
-    props: [
-        "title"
-    ],
-    data() {
-        return {
-            a: false,
-            TreeDate:{},
-            form: {
-                category: '',
-                cid:'',
-                title: '',
-                price: '',
-                num: '',
-                date1: '',
-                date2: '',
-                sellpoint: '',
-                image: '',
-                descs: ''
-            },
-            rules: {
-                title: [
-                    { required: true, message: '请输入商品名称', trigger: 'blur' },
-                    { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
-                ],
-                price: [
-                    { required: true, message: '请输入商品价格', trigger: 'blur' },
-                    { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-                ],
-                num: [
-                    { required: true, message: '请输入商品数量', trigger: 'blur' }
-                ],
-
-            },
-            innerVisible:false,
-            innerImgVisible:false,
-        };
-    },
-    methods: {
-        showImgUp(){
-            this.innerImgVisible = !this.innerImgVisible
-        },
-        handleClose(done) {
-            this.$confirm('确认关闭？')
-            .then(_ => {
-            done();
-            })
-            .catch(_ => {});
-        },
-        onSubmit() {
-
-            this.$refs.form.validate(async (valid) => {
-                if (valid) {
-                    try{
-                        const res = addGoods(this.form)
-                        if(res.status == 200){
-                            this.a = false
-                            this.$parent.getGoodsList()
-                            this.$message(
-                                {
-                                    message:'添加成功',
-                                    type:'success'
-                                }
-                            )
-                        }else{
-                            this.$message.error('添加失败')
-                        }
-                    }catch(err){
-                        console.error(err)
-                    }
-                    
-                } else {
-                    console.log('error submit!!');
-                    return false;
-                }
-            });
-        },
-        resetForm() {
-            console.log(this.$children[0])
-            this.$refs['form'].resetFields();
-            this.a = false
-            
-        },
-        getTreeDate(date){
-           this.TreeDate = date;
-           console.log(this.TreeDate);
-        },
-        showInnerVisible(){
-            this.innerVisible = false
-            this.form.category = this.TreeDate.name
-            this.form.cid = this.TreeDate.cid
-        },
-        getImgURL(url){
-
-        },
-        getEditor(val){
-           this.form.descs = val;
-        },
+  props: ['title'],
+  data() {
+    return {
+      a: false,
+      form: {
+        m_name: '',
+        m_photo: [],
+        m_shxydm: '',
+        m_infor: '',
+        m_logo: '',
+        m_yyzz: '',
+        m_creater: '',
+        m_status: 0
+      },
+      rules: {
+        m_shxydm: [{ required: true, message: '请输入公司统一社会信用码', trigger: 'blur' }],
+        m_name: [{ required: true, message: '请输入公司名称', trigger: 'blur' }],
+        m_creater: [{ required: true, message: '请输入公司管理员ID', trigger: 'blur' }]
+      },
+      dialogVisible: false,
+      dialogImageUrl: '',
+      fileList: [],
+      disabled: false
     }
-};
+  },
+  methods: {
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(_ => {
+          done()
+        })
+        .catch(_ => {})
+    },
+    onSubmit() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          postRequest('/newAdminMechanism', this.form)
+            .then(res => {
+              this.$message.success('新建成功')
+              this.resetForm()
+              this.a = false
+              this.$emit('successsubmit')
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm() {
+      console.log(this.$children[0])
+      this.$refs['form'].resetFields()
+      this.a = false
+    },
+    handleSuccess(res, file, fileList) {
+      console.log(res)
+      this.form.m_logo = res.data.imageurl
+    },
+    handleSuccess1(res, file, fileList) {
+      this.form.m_yyzz = res.data.imageurl
+    },
+    handleSuccess2(res, file, fileList) {
+      this.form.m_photo.push(res.data.imageurl)
+      console.log(this.form.m_photo)
+    },
+    handleError(err, file, fileList) {
+      console.log(err)
+    },
+    handleRemove(file, fileList) {
+      console.log(file)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
+    throwOver(file, fileList) {
+      this.$message.error('文件数量超出限制,限制为1个')
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
 .myform {
-        padding: 20px;
+  padding: 20px;
 
-        .line {
-            text-align: center;
-        }
-    }
+  .line {
+    text-align: center;
+  }
+}
 </style>

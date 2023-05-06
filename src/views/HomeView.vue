@@ -9,11 +9,11 @@
 
       <div class="flex reverse">
         <el-dropdown :show-timeout="150" @command="exitLogin($event)">
-        <el-button icon="el-icon-setting" circle class="setting-button"></el-button>
-        <el-dropdown-menu>
-              <el-dropdown-item command="exit">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          <el-button icon="el-icon-setting" circle class="setting-button"></el-button>
+          <el-dropdown-menu>
+            <el-dropdown-item command="exit">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </el-header>
     <el-container class="nativeclass">
@@ -40,7 +40,7 @@
             </el-menu-item>
             <el-menu-item index="5" route="/home/cvmanage">
               <i class="el-icon-s-check"></i>
-              <span slot="title">用户简历管理</span>
+              <span slot="title">用户简历</span>
             </el-menu-item>
             <el-menu-item index="6" route="/home/usermanage">
               <i class="el-icon-mouse"></i>
@@ -78,7 +78,7 @@ export default {
     handleClose(key, keypath) {
       console.log(key, keypath)
     },
-    exitLogin(e){
+    exitLogin(e) {
       if (e == 'exit') {
         console.log(e)
       }
