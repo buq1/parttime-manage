@@ -1,14 +1,21 @@
 <template>
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column label="简历ID" prop="cv_id"> </el-table-column>
-    <el-table-column label="创建人ID" prop="user_id"> </el-table-column>
-    <el-table-column label="姓名" prop="cv_name"> </el-table-column>
-    <el-table-column label="性别" prop="cv_sex"> </el-table-column>
-    <el-table-column label="联系电话" prop="cv_phone"> </el-table-column>
-    <el-table-column label="出生日期" prop="cv_birthday"> </el-table-column>
-    <el-table-column label="就读院校" prop="cv_school"> </el-table-column>
-    <el-table-column label="就读专业" prop="cv_major"> </el-table-column>
-    <el-table-column label="个人介绍" prop="cv_introduce"> </el-table-column>
+    <el-table-column label="公司ID" prop="m_id"> </el-table-column>
+    <el-table-column label="公司介绍" prop="m_infor"> </el-table-column>
+    <el-table-column label="公司名称" prop="m_name"> </el-table-column>
+    <el-table-column label="公司logo" prop="m_logo">
+      <template v-slot="{ row }">
+        <el-image :src="row.m_logo" lazy></el-image>
+      </template>
+    </el-table-column>
+    <el-table-column label="公司环境" prop="m_photo"> </el-table-column>
+    <el-table-column label="营业执照" prop="m_yyzz">
+      <template v-slot="{ row }">
+        <el-image :src="row.m_yyzz" lazy></el-image>
+      </template>
+    </el-table-column>
+    <el-table-column label="社会信用代码" prop="m_shxydm"> </el-table-column>
+    <el-table-column label="公司管理人" prop="m_creater"> </el-table-column>
     <el-table-column align="right">
       <template slot="header" slot-scope="scope">
         <el-input v-model="search" @input="toSearch" size="mini" placeholder="输入关键字搜索" />
@@ -23,7 +30,6 @@
 
 <script>
 import { getRequest, postRequest } from '@/request/api'
-
 export default {
   data() {
     return {
@@ -36,7 +42,7 @@ export default {
   },
   methods: {
     initTable() {
-      getRequest('/getCvHistory')
+      getRequest('/getPendingMe')
         .then(res => {
           this.tableData = res.data.data
         })
@@ -44,7 +50,7 @@ export default {
       if (this.tableData != []) this.$emit('changeNum')
     },
     handlePass(row) {
-      postRequest('/passCV', row)
+      postRequest('/passMe', row)
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
             if (res.data.code == 400) {
@@ -61,7 +67,7 @@ export default {
         .catch(err => console.log(err))
     },
     handleReject(row) {
-      postRequest('/rejectCV', row)
+      postRequest('/rejectMe', row)
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
             if (res.data.code == 400) {
@@ -83,7 +89,7 @@ export default {
       if (val == '') this.initTable()
       else {
         let data = { texString: val }
-        postRequest('/searchpersonal', data)
+        postRequest('/searchPendingMe', data)
           .then(res => {
             this.tableData = res.data.data
           })

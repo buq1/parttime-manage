@@ -1,14 +1,13 @@
 <template>
   <el-table :data="tableData" style="width: 100%">
-    <el-table-column label="简历ID" prop="cv_id"> </el-table-column>
-    <el-table-column label="创建人ID" prop="user_id"> </el-table-column>
-    <el-table-column label="姓名" prop="cv_name"> </el-table-column>
-    <el-table-column label="性别" prop="cv_sex"> </el-table-column>
-    <el-table-column label="联系电话" prop="cv_phone"> </el-table-column>
-    <el-table-column label="出生日期" prop="cv_birthday"> </el-table-column>
-    <el-table-column label="就读院校" prop="cv_school"> </el-table-column>
-    <el-table-column label="就读专业" prop="cv_major"> </el-table-column>
-    <el-table-column label="个人介绍" prop="cv_introduce"> </el-table-column>
+    <el-table-column label="用户ID" prop="ri_id"> </el-table-column>
+    <el-table-column label="公司ID" prop="ri_jgid"> </el-table-column>
+    <el-table-column label="职位" prop="ri_position"> </el-table-column>
+    <el-table-column label="联系方式" prop="ri_phone"> </el-table-column>
+    <el-table-column label="身份证号码" prop="ri_sfz"> </el-table-column>
+    <el-table-column label="公司管理员权限" prop="ri_admin"> </el-table-column>
+    <el-table-column label="招聘人姓名" prop="ri_name"> </el-table-column>
+    <el-table-column label="身份证照片" prop="ri_sfzzp"> </el-table-column>
     <el-table-column align="right">
       <template slot="header" slot-scope="scope">
         <el-input v-model="search" @input="toSearch" size="mini" placeholder="输入关键字搜索" />
@@ -23,7 +22,6 @@
 
 <script>
 import { getRequest, postRequest } from '@/request/api'
-
 export default {
   data() {
     return {
@@ -36,7 +34,7 @@ export default {
   },
   methods: {
     initTable() {
-      getRequest('/getCvHistory')
+      getRequest('/getPendingRi')
         .then(res => {
           this.tableData = res.data.data
         })
@@ -44,7 +42,7 @@ export default {
       if (this.tableData != []) this.$emit('changeNum')
     },
     handlePass(row) {
-      postRequest('/passCV', row)
+      postRequest('/passRi', row)
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
             if (res.data.code == 400) {
@@ -61,7 +59,7 @@ export default {
         .catch(err => console.log(err))
     },
     handleReject(row) {
-      postRequest('/rejectCV', row)
+      postRequest('/rejectRi', row)
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
             if (res.data.code == 400) {
@@ -83,7 +81,7 @@ export default {
       if (val == '') this.initTable()
       else {
         let data = { texString: val }
-        postRequest('/searchpersonal', data)
+        postRequest('/searchPendingRi', data)
           .then(res => {
             this.tableData = res.data.data
           })

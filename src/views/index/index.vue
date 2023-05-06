@@ -79,7 +79,7 @@
               <span>今日新增岗位</span>
             </div>
             <div class="count">
-              <span>{{ awaitpaid }}</span>
+              <span>{{ jobCount.todayNum }}</span>
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@
               <span>待审批岗位</span>
             </div>
             <div class="count">
-              <span>{{ awaitSendOut }}</span>
+              <span>{{ jobCount.pendingNum }}</span>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
               <span>累计岗位数</span>
             </div>
             <div class="count">
-              <span>{{ alreadyReceiving }}</span>
+              <span>{{ jobCount.total }}</span>
             </div>
           </div>
         </div>
@@ -298,11 +298,7 @@ export default {
       userCount: {},
       cvCount: {},
       companyCount: {},
-      parentCount: {
-        discrepancy: 0,
-        subtract: 0,
-        total: 0
-      },
+      jobCount: {},
       newUserCount: {
         discrepancy: 0,
         subtract: 0,
@@ -314,6 +310,7 @@ export default {
     this.getUserNum()
     this.getCVNum()
     this.getMeNum()
+    this.getJobNum()
   },
   mounted() {},
   methods: {
@@ -343,6 +340,13 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    getJobNum() {
+      getRequest('/getJobNum')
+        .then(res => {
+          this.jobCount = res.data.data
+        })
+        .catch(err => console.log(err))
     }
   }
 }

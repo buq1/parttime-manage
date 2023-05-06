@@ -1,65 +1,51 @@
 <template>
-  <div class="s-nav">
-    <div class="filter-container">
-      <el-input v-model="listQuery" @input="initData" placeholder="输入岗位名称或者ID" style="width: 200px" class="filter-item" />
-      <el-button class="filter-item" @click="handleSearch()" type="primary" icon="el-icon-search"> 查询</el-button>
-    </div>
-    <div class="c-bottom">
-      <div class="bar-title"></div>
-      <el-table :data="tableData1" border style="width: 100%">
-        <el-table-column prop="job_id" label="岗位ID" min-width="100"> </el-table-column>
-        <el-table-column prop="ri_id" label="招聘人ID" min-width="100"> </el-table-column>
-        <el-table-column prop="job_name" label="岗位名称" min-width="200"> </el-table-column>
-        <el-table-column prop="job_xs" label="薪资" min-width="120"></el-table-column>
-        <el-table-column prop="job_js" label="结算方式" min-width="80">
-          <template v-slot="{ row }">
-            <span>{{ row.job_js | formatJs }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="job_lb" label="岗位类别" min-width="120">
-          <template v-slot="{ row }">
-            <span>{{ row.job_lb | formatLb }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="job_infor" label="岗位介绍" min-width="300">
-          <template v-slot="{ row }">
-            <div v-html="row.job_infor"></div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="job_address" label="工作地址" min-width="200"></el-table-column>
-        <el-table-column prop="job_time" label="日兼职时间区间" min-width="200"></el-table-column>
-        <el-table-column prop="job_hy" label="兼职所属行业" min-width="120">
-          <template v-slot="{ row }">
-            <span>{{ row.job_hy | formatHy }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="job_date" label="发布时间" min-width="200"></el-table-column>
-        <el-table-column props="job_status" label="岗位状态" min-width="100">
-          <template v-slot="{ row }">
-            <span>{{ row.job_status | formatStatus }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="150">
-          <template v-slot="scope">
-            <el-popconfirm @confirm="onDelete(scope.row)" confirm-button-text="好的" cancel-button-text="不用了" icon="el-icon-info" icon-color="red" title="确定删除这份兼职吗？">
-              <el-button slot="reference" type="error" size="small">删除</el-button>
-            </el-popconfirm>
-            <el-button v-if="scope.row.job_status == 0" @click="onUnline(scope.row)" type="primary" size="small">下线</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-  </div>
+  <el-table :data="tableData" style="width: 100%">
+    <el-table-column label="岗位ID" prop="job_id"> </el-table-column>
+    <el-table-column label="招聘方ID" prop="ri_id"> </el-table-column>
+    <el-table-column label="岗位名" prop="job_name"> </el-table-column>
+    <el-table-column label="薪水" prop="job_xs"> </el-table-column>
+    <el-table-column label="类别" prop="job_lb">
+      <template v-slot="{ row }">
+        <span>{{ row.job_lb | formatLb }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="岗位介绍" prop="job_infor">
+      <template v-slot="{ row }">
+        <div v-html="row.job_infor"></div>
+      </template>
+    </el-table-column>
+    <el-table-column label="工作地址" prop="job_address"> </el-table-column>
+    <el-table-column label="结算方式" prop="job_js">
+      <template v-slot="{ row }">
+        <span>{{ row.job_js | formatJs }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="工作时间" prop="job_time"> </el-table-column>
+    <el-table-column label="岗位行业" prop="job_hy">
+      <template v-slot="{ row }">
+        <span>{{ row.job_hy | formatHy }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="发布时间" prop="job_date"> </el-table-column>
+    <el-table-column align="right">
+      <template slot="header" slot-scope="scope">
+        <el-input v-model="search" @input="toSearch" size="mini" placeholder="输入关键字搜索" />
+      </template>
+      <template slot-scope="scope">
+        <el-button size="mini" @click="handlePass(scope.row)">通过</el-button>
+        <el-button size="mini" type="danger" @click="handleReject(scope.row)">驳回</el-button>
+      </template>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
 import { getRequest, postRequest } from '@/request/api'
-
 export default {
   data() {
     return {
-      listQuery: '',
-      tableData1: []
+      tableData: [],
+      search: ''
     }
   },
   created() {
@@ -67,22 +53,39 @@ export default {
   },
   methods: {
     initTable() {
-      getRequest('/getJobAll')
+      getRequest('/getPendingJob')
         .then(res => {
-          this.tableData1 = res.data.data
+          this.tableData = res.data.data
+        })
+        .catch(err => console.log(err))
+      if (this.tableData != []) this.$emit('changeNum')
+    },
+    handlePass(row) {
+      postRequest('/passJob', row)
+        .then(res => {
+          if (res.status >= 200 && res.status < 300) {
+            if (res.data.code == 400) {
+              this.$message.error(res.data.message)
+              return
+            } else {
+              this.$message.success('通过成功')
+              this.initTable()
+            }
+          } else {
+            this.$message.error('网络或服务器错误！')
+          }
         })
         .catch(err => console.log(err))
     },
-    onUnline(row) {
-      console.log(row)
-      postRequest('/unlineJob', row)
+    handleReject(row) {
+      postRequest('/rejectJob', row)
         .then(res => {
           if (res.status >= 200 && res.status < 300) {
             if (res.data.code == 400) {
               this.$message.error(res.data.message)
               return
             } else {
-              this.$message.success('下线成功')
+              this.$message.success('驳回成功')
               this.initTable()
             }
           } else {
@@ -93,46 +96,18 @@ export default {
           console.log(err)
         })
     },
-    onDelete(row) {
-      postRequest('/deleteJob', row)
-        .then(res => {
-          if (res.status >= 200 && res.status < 300) {
-            if (res.data.code == 400) {
-              this.$message.error(res.data.message)
-              return
-            } else {
-              this.$message.success('删除成功')
-              this.initTable()
-            }
-          } else {
-            this.$message.error('网络或服务器错误！')
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-    initData(val) {
+    toSearch(val) {
       if (val == '') this.initTable()
-    },
-    handleSearch() {
-      let data = { texString: this.listQuery }
-      postRequest('/searchJob', data)
-        .then(res => {
-          if (res.status >= 200 && res.status < 300) {
-            if (res.data.code == 400) {
-              this.$message.error(res.data.message)
-              return
-            } else {
-              this.tableData1 = res.data.data
-            }
-          } else {
-            this.$message.error('网络或服务器错误！')
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      else {
+        let data = { texString: val }
+        postRequest('/searchPendingJob', data)
+          .then(res => {
+            this.tableData = res.data.data
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
     }
   },
   filters: {
@@ -345,5 +320,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>
